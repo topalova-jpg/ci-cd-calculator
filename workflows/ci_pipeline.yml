@@ -1,0 +1,53 @@
+name: Python Calculator Parallel CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # 1. ЗАВДАННЯ: RUN TESTS (Крок 1)
+  run_tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' 
+          
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest  
+          
+      # Запуск тестів
+      - name: Execute Unit Tests
+        run: pytest 
+
+  # 2. ЗАВДАННЯ: RUN LINTER (Крок 2, виконується ПАРАЛЕЛЬНО)
+  run_linter:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install Linter
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8  
+          
+      # Запуск лінтера
+      - name: Run Flake8 Linter Check
+        run: flake8 .
